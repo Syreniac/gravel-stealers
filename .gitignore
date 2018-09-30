@@ -37,3 +37,6 @@ sysinfo.txt
 
 # Log files
 *.log
+
+# Some extra ones from me
+Library/**
