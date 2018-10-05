@@ -10,12 +10,14 @@ public class Block : MonoBehaviour {
 		// Visible - should be rendered
 		VISIBLE,
 		// Hidden - should not be rendered. Typically only used for blocks outside of the current camera view
-		HIDDEN
+		HIDDEN,
+		// Blocked - should be rendered, but as blank space
+		BLOCKED
 	}
 
 	public int checkFlag { get; set; }
 
-	public short checkedFrom { get; set; }
+	public GridDirection checkedFrom { get; set; }
 
 	private BitVector32 checkDirection = new BitVector32(); 
 
@@ -41,18 +43,28 @@ public class Block : MonoBehaviour {
 		}
 	}
 
-	public bool getCheckDirectionBit(int flag)
+	public Block()
 	{
-		return checkDirection[flag];
+		checkFlag = 0;
 	}
 
-	public void setCheckDirectionBit(int flag, bool bit)
+	public bool getCheckDirectionBit(GridDirection flag)
 	{
-		checkDirection[flag] = bit;
+		return checkDirection[(int)flag];
+	}
+
+	public void setCheckDirectionBit(GridDirection flag, bool bit)
+	{
+		checkDirection[(int)flag] = bit;
 	}
 
 	private void recalculateRendering() {
-		if (!_renderable)
+		if (visible == Visibility.BLOCKED)
+		{
+			gameObject.GetComponent<MeshRenderer>().enabled = true;
+
+		}
+		else if (!_renderable)
 		{
 			gameObject.GetComponent<MeshRenderer>().enabled = false;
 		}
@@ -63,7 +75,6 @@ public class Block : MonoBehaviour {
 				case Visibility.VISIBLE:
 					gameObject.GetComponent<MeshRenderer>().enabled = true;
 					break;
-				case Visibility.BLOCKED:
 				case Visibility.HIDDEN:
 					gameObject.GetComponent<MeshRenderer>().enabled = false;
 					break;

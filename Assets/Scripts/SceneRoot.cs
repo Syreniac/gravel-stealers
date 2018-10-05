@@ -28,11 +28,11 @@ public class SceneRoot : MonoBehaviour
 					{
 						blocks[x, y, z] = Instantiate(block, new Vector3(x, y, z), Quaternion.identity);
 						blocks[x, y, z].GetComponent<MeshRenderer>().material.color = colors[colorIndex++ % colors.Length];
-						blocks[x, y, z].renderable = y == 13 || x == 13;
+						blocks[x, y, z].renderable = y == 13 || x == 13 || x == 0 || y == 0 || x == (SceneRoot.X_DIM - 1) || y == (SceneRoot.Y_DIM - 1);
 					}
 				blocks[x, y, Z_DIM - 1] = Instantiate(block, new Vector3(x, y, Z_DIM - 1), Quaternion.identity);
 				blocks[x, y, Z_DIM - 1].GetComponent<MeshRenderer>().material.color = colors[colorIndex++ % colors.Length];
-				colorIndex += x + y;
+				colorIndex += x + y + 1;
 			}
 		}
 	}
