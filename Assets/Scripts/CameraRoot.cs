@@ -142,6 +142,10 @@ public class CameraRoot : MonoBehaviour
 					{
 						parent.getBlocks()[x, y, z].visible = Block.Visibility.VISIBLE;
 					}
+					else if (parent.getBlocks()[x, y, z].checkFlag != checkFlag && z == blockZ)
+					{
+						parent.getBlocks()[x, y, z].visible = Block.Visibility.BLOCKED;
+					}
 					else
 					{
 						parent.getBlocks()[x, y, z].visible = Block.Visibility.HIDDEN;
