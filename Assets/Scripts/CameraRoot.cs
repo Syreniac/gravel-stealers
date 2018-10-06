@@ -11,23 +11,13 @@ public class CameraRoot : MonoBehaviour
 		RTS
 	}
 
-	private const float CAMERA_SPEED_MULTI = 2.0f;
+	private const float CAMERA_MOVE_SPEED_MULTI = 4.0f;
 
-	private const float MIN_Y = 0.0f, MIN_X = 0.0f, MIN_Z = 0.0f;
+	private const float CAMERA_ROTATION_SPEED_MULTI = 45f;
 
-	private const float MAX_Y = SceneRoot.Y_DIM, MAX_X = SceneRoot.X_DIM, MAX_Z = SceneRoot.Z_DIM - 1.1f;
+	private const float MIN_Y = 0.1f, MIN_X = 0.1f, MIN_Z = 0.1f;
 
-	private static int XDOWN_BITFLAG = BitVector32.CreateMask();
-
-	private static int XUP_BITFLAG = BitVector32.CreateMask(XDOWN_BITFLAG);
-
-	private static int YDOWN_BITFLAG = BitVector32.CreateMask(XUP_BITFLAG);
-
-	private static int YUP_BITFLAG = BitVector32.CreateMask(YDOWN_BITFLAG);
-
-	private static int ZDOWN_BITFLAG = BitVector32.CreateMask(YUP_BITFLAG);
-
-	private static int ZUP_BITFLAG = BitVector32.CreateMask(ZDOWN_BITFLAG);
+	private const float MAX_Y = SceneRoot.Y_DIM - 0.1f, MAX_X = SceneRoot.X_DIM - 0.1f, MAX_Z = SceneRoot.Z_DIM - 1.1f;
 
 	private int blockX = 0, blockY = 0, blockZ = 0;
 
@@ -36,10 +26,13 @@ public class CameraRoot : MonoBehaviour
 	private CameraBehavior cameraBehavior = CameraBehavior.RTS;
 
 	private SceneRoot parent;
+
+	public Camera camera;
 	
 	void Start () {
 		parent = transform.GetComponentInParent<SceneRoot>();
 		changeHiddenBlocks();
+        camera.transform.LookAt(transform.position, Vector3.back);
 	}
 
 	void Update()
@@ -47,56 +40,62 @@ public class CameraRoot : MonoBehaviour
 		Vector3 position = transform.position;
 		if (Input.GetButton("Down"))
 		{
-			position.y -= Time.deltaTime * CAMERA_SPEED_MULTI;
-			if (position.y < MIN_Y)
-			{
-				position.y = MIN_Y;
-			}
+			position.x += Time.deltaTime * CAMERA_MOVE_SPEED_MULTI * (Mathf.Sin(Mathf.Deg2Rad * (-transform.rotation.eulerAngles.z)));
+            position.y += Time.deltaTime * CAMERA_MOVE_SPEED_MULTI * (Mathf.Cos(Mathf.Deg2Rad * (-transform.rotation.eulerAngles.z)));
 		}
 		else if (Input.GetButton("Up"))
-		{
-			position.y += Time.deltaTime * CAMERA_SPEED_MULTI;
-			if (position.y > MAX_Y)
-			{
-				position.y = MAX_Y;
-			}
-		}
+        {
+            position.x -= Time.deltaTime * CAMERA_MOVE_SPEED_MULTI * (Mathf.Sin(Mathf.Deg2Rad * (-transform.rotation.eulerAngles.z)));
+            position.y -= Time.deltaTime * CAMERA_MOVE_SPEED_MULTI * (Mathf.Cos(Mathf.Deg2Rad * (-transform.rotation.eulerAngles.z)));
+        }
 
 		if (Input.GetButton("Left"))
-		{
-			position.x -= Time.deltaTime * CAMERA_SPEED_MULTI;
-			if (position.x < MIN_X)
-			{
-				position.x = MIN_X;
-			}
-		}
+        {
+            position.x += Time.deltaTime * CAMERA_MOVE_SPEED_MULTI * (Mathf.Cos(Mathf.Deg2Rad * (transform.rotation.eulerAngles.z)));
+            position.y += Time.deltaTime * CAMERA_MOVE_SPEED_MULTI * (Mathf.Sin(Mathf.Deg2Rad * (transform.rotation.eulerAngles.z)));
+        }
 		else if (Input.GetButton("Right"))
-		{
-			position.x += Time.deltaTime * CAMERA_SPEED_MULTI;
-			if (position.x > MAX_X)
-			{
-				position.x = MAX_X;
-			}
-		}
+        {
+            position.x -= Time.deltaTime * CAMERA_MOVE_SPEED_MULTI * (Mathf.Cos(Mathf.Deg2Rad * (transform.rotation.eulerAngles.z)));
+            position.y -= Time.deltaTime * CAMERA_MOVE_SPEED_MULTI * (Mathf.Sin(Mathf.Deg2Rad * (transform.rotation.eulerAngles.z)));
+        }
 		if (Input.GetButton("In"))
 		{
-			position.z -= Time.deltaTime * CAMERA_SPEED_MULTI;
-			if (position.z < MIN_Z)
-			{
-				position.z = MIN_Z;
-			}
+			position.z -= Time.deltaTime * CAMERA_MOVE_SPEED_MULTI;
 		}
 		else if (Input.GetButton("Out"))
 		{
-			position.z += Time.deltaTime * CAMERA_SPEED_MULTI;
-			if (position.z > MAX_Z)
-			{
-				position.z = MAX_Z;
-			}
+			position.z += Time.deltaTime * CAMERA_MOVE_SPEED_MULTI;
 		}
-		int newBlockX = (int) position.x;
-		int newBlockY = (int) position.y;
-		int newBlockZ = (int) position.z;
+        if(position.x < MIN_X)
+        {
+            position.x = MIN_X;
+        }
+        else if(position.x > MAX_X)
+        {
+            position.x = MAX_X;
+        }
+        if(position.y < MIN_Y)
+        {
+            position.y = MIN_Y;
+        }
+        else if(position.y > MAX_Y)
+        {
+            position.y = MAX_Y;
+        }
+        if(position.z < MIN_Z)
+        {
+            position.z = MIN_Z;
+        }
+        else if(position.z > MAX_Z)
+        {
+            position.z = MAX_Z;
+        }
+
+		adjustCameraAngle();
+		int newBlockX = (int) transform.position.x;
+		int newBlockY = (int) transform.position.y;
+		int newBlockZ = (int) transform.position.z;
 		if (newBlockX != blockX || newBlockY != blockY || newBlockZ != blockZ)
 		{
 			blockX = newBlockX;
@@ -104,8 +103,20 @@ public class CameraRoot : MonoBehaviour
 			blockZ = newBlockZ;
 			changeHiddenBlocks();
 		}
-		transform.position = position;
+        transform.position = position;
 
+	}
+
+	private void adjustCameraAngle()
+	{
+
+		// Rotate Right Click
+		if (Input.GetMouseButton(1))
+		{// fetch the users mouse motion for this frame
+			float x = Input.GetAxis("Mouse X") * -3f;
+			// now adjust cameras rotation around target player based on the mouse x,y movement
+			transform.RotateAround(transform.position, Vector3.back, x);
+		}
 	}
 
 	private void changeHiddenBlocks()
