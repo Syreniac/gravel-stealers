@@ -6,7 +6,7 @@ using UnityEngine;
 public class SceneRoot : MonoBehaviour
 {
 
-	public const int X_DIM = 25, Y_DIM = 25, Z_DIM = 5;
+	public const int X_DIM = 26, Y_DIM = 26, Z_DIM = 8;
 
 	public Block block;
 
@@ -15,7 +15,7 @@ public class SceneRoot : MonoBehaviour
 	// Use this for initialization
 	void Start()
 	{
-		Color[] colors = { new Color(255, 0, 0), new Color(0, 255, 0), new Color(0, 0, 255), new Color(255, 255, 0), new Color(255, 0, 255), new Color(0, 255, 255), new Color(255, 255, 255), new Color(0, 0, 0) };
+		Color[] colors = { new Color(79f/255f, 58f/255f, 56f/255f), new Color(137f/255f, 127f/255f, 117f/255f), new Color(48f/255f, 28f/255f, 30f/255f), new Color(121f/255f, 72f/255f, 51f/255f), new Color(165f/255f, 161f/255f, 152f/255f)};
 		int colorIndex = 0;
 		// Create a XxYxZ block of cubes
 		for (int x = 0; x < X_DIM; x++)
@@ -32,7 +32,7 @@ public class SceneRoot : MonoBehaviour
 					}
 				blocks[x, y, Z_DIM - 1] = Instantiate(block, new Vector3(x, y, Z_DIM - 1), Quaternion.identity);
 				blocks[x, y, Z_DIM - 1].GetComponent<MeshRenderer>().material.color = colors[colorIndex++ % colors.Length];
-				colorIndex += x + y + 1;
+                colorIndex += 10;
 			}
 		}
 	}
