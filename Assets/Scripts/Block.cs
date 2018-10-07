@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using UnityEngine;
@@ -11,17 +12,21 @@ public class Block : MonoBehaviour {
 		VISIBLE,
 		// Hidden - should not be rendered. Typically only used for blocks outside of the current camera view
 		HIDDEN,
-		// Blocked - should be rendered, but as blank space
-		BLOCKED
+		// Blocked - should be rendered ignoring the visibility
+		BLOCKED,
+
+        HIDDEN_2
 	}
 
-	public int checkFlag { get; set; }
+    public int _checkFlag;
 
-	public GridDirection checkedFrom { get; set; }
+	public int checkFlag { get { return _checkFlag; } set { _checkFlag = value; } }
 
-	private BitVector32 checkDirection = new BitVector32(); 
+	public ulong checkedFrom { get; set; }
 
-	private bool _renderable = true; 
+	public ulong checkDirection = 0; 
+
+	public bool _renderable = true; 
 
 	public bool renderable {
 		get { return _renderable; }
@@ -32,7 +37,7 @@ public class Block : MonoBehaviour {
 		}
 	}
 
-	private Visibility _visible;
+	public Visibility _visible;
 
 	public Visibility visible {
 		get { return _visible; }
@@ -50,12 +55,12 @@ public class Block : MonoBehaviour {
 
 	public bool getCheckDirectionBit(GridDirection flag)
 	{
-		return checkDirection[(int)flag];
+		return (checkDirection & ((ulong) flag)) != 0;
 	}
 
 	public void setCheckDirectionBit(GridDirection flag, bool bit)
 	{
-		checkDirection[(int)flag] = bit;
+		checkDirection = bit ? (checkDirection | ((ulong)flag)) : (checkDirection ^ ((ulong)flag));
 	}
 
 	private void recalculateRendering() {
@@ -74,9 +79,10 @@ public class Block : MonoBehaviour {
 			{
 				case Visibility.VISIBLE:
 					gameObject.GetComponent<MeshRenderer>().enabled = true;
-					break;
-				case Visibility.HIDDEN:
-					gameObject.GetComponent<MeshRenderer>().enabled = false;
+                    break;
+                case Visibility.HIDDEN_2:
+                case Visibility.HIDDEN:
+                    gameObject.GetComponent<MeshRenderer>().enabled = false;
 					break;
 			}
 		}
