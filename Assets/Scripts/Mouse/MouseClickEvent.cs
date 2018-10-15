@@ -9,14 +9,19 @@ namespace Assets.Scripts.Mouse
 {
     public class MouseClickEvent : CancellableEvent
     {
-        private MonoBehaviour entity;
 
         private Vector3 mouseVector;
+        private GameObject target;
 
-        public MouseClickEvent(MonoBehaviour entity, Vector3 mouseVector)
+        public MouseClickEvent(Vector3 mouseVector, GameObject target)
         {
-            this.entity = entity;
             this.mouseVector = mouseVector;
+            this.target = target;
+        }
+
+        public GameObject GetTarget()
+        {
+            return target;
         }
 
     }

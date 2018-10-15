@@ -17,35 +17,35 @@ namespace Assets.Scripts.Mouse
         public bool cursor = false;
         Vector3 renderPosition = Vector3.zero;
 
-        private MonoBehaviour entity;
-
-
-        public MouseControl(MonoBehaviour entity)
-        {
-            this.entity = entity;
-        }
 
 
 
         public void Check()
         {
-            if (!cursor)
-            {
-                Cursor.SetCursor(cursorTexture, hotSpot, cursorMode);
-                cursor = true;
-            }
-            float distance = 0f;
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            Plane hPlane = new Plane(Vector3.up, new Vector3(0, entity.transform.position.y, 0));
-            if (hPlane.Raycast(ray, out distance))
-            {
-                renderPosition = ray.GetPoint(distance);
-                renderPosition = new Vector3(renderPosition.x, renderPosition.y + 0.1f, renderPosition.z);
-            }
-
             if (Input.GetKeyDown(KeyCode.Mouse0))
             {
-                EventRegistry.BroadcastEvent<MouseClickEvent>(new MouseClickEvent(entity, renderPosition));
+                if (!cursor)
+                {
+                    Cursor.SetCursor(cursorTexture, hotSpot, cursorMode);
+                    cursor = true;
+                }
+                float distance = 0f;
+                var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                Plane hPlane = new Plane(Vector3.up, new Vector3(0, 0, 0));
+                if (hPlane.Raycast(ray, out distance))
+                {
+                    renderPosition = ray.GetPoint(distance);
+                    renderPosition = new Vector3(renderPosition.x, renderPosition.y + 0.1f, renderPosition.z);
+                }
+                GameObject target = null;
+                RaycastHit hit;
+                if (Physics.Raycast(ray, out hit))
+                {
+                    target = hit.collider.gameObject;
+                }
+
+
+                EventRegistry.BroadcastEvent<MouseClickEvent>(new MouseClickEvent(renderPosition, target));
             }
 
         }

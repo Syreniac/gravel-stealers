@@ -24,6 +24,22 @@ namespace Assets.Scripts.Selections
         
         private static Dictionary<int, EntityRecord> entities = new Dictionary<int, EntityRecord>();
 
+        public static Boolean Contains(GameObject gameObject)
+        {
+            return entities.ContainsKey(gameObject.GetInstanceID());
+        }
+
+        public static void interact(Type type, GameObject gameObject)
+        {
+            EntityRecord record = entities[gameObject.GetInstanceID()];
+            if (record.ContainsKey(type))
+            {
+                foreach (EntityInteractor e in record[type]){
+                    e.Interact();
+                }
+            }
+        }
+
         public static void Register<T>(T entityInteractor, GameObject gameObject) where T : EntityInteractor
         {
             int id = gameObject.GetInstanceID();

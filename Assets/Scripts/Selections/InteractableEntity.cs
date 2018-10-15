@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Assets.Scripts.Selections
 {
-    public class InteractableEntity : BehaviourEntity
+    public abstract class InteractableEntity : BehaviourEntity
     {
         private List<EntityInteractor> interactors = new List<EntityInteractor>();
 
@@ -17,13 +17,13 @@ namespace Assets.Scripts.Selections
             }
         }
 
-        void addInteractor(EntityInteractor interactor)
+        public void addInteractor(EntityInteractor interactor)
         {
             this.interactors.Add(interactor);
             InteractorRegistry.Register(interactor, gameObject);
         }
 
-        void removeInteractor(EntityInteractor interactor)
+        public void removeInteractor(EntityInteractor interactor)
         {
             this.interactors.Remove(interactor);
             InteractorRegistry.Unregister(interactor, gameObject);

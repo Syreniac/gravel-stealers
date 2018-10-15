@@ -5,11 +5,10 @@ using System.Text;
 
 namespace Assets.Scripts.Selections
 {
-    public class EntityInteractor
+    public interface EntityInteractor
     {
-        void OnDisable()
-        {
 
-        }
+
+        void Interact();
     }
 }

@@ -7,6 +7,10 @@ namespace Assets.Scripts.Behaviours
 {
     public class ExampleEntity : BehaviourEntity
     {
+        public override void DoUpdate()
+        {
+        }
+
         // Use this for initialization
         void Start()
         {

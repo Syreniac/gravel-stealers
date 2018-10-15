@@ -10,7 +10,7 @@ namespace Assets.Scripts.Behaviours
     //Instead of tying a script directly to a gameobject, this allows for one script to be tied to many gameObjects
     //Also allows for many behaviours to be added and removed, each of which will be called during the Update thread
 
-    public class BehaviourEntity : MonoBehaviour
+    public abstract class BehaviourEntity : MonoBehaviour
     {
         private List<EntityBehaviour> behaviours = new List<EntityBehaviour>();
 
@@ -30,7 +30,10 @@ namespace Assets.Scripts.Behaviours
                     }
                 }
             }
+            this.DoUpdate();
         }
+
+        public abstract void DoUpdate();
 
         public void addBehaviour(EntityBehaviour behaviour)
         {

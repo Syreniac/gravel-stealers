@@ -17,7 +17,7 @@ namespace Assets.Scripts.ControllerConfigs
         public UnitControllerConfig(BehaviourEntity unit)
         {
             this.unit = unit;
-            controls.Add(new MouseControl(unit));
+            controls.Add(new MouseControl());
         }
 
         public void Update()
